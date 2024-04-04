@@ -45,7 +45,7 @@ def main() -> None:
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+        "You descend into an ancient crypt.", color.welcome_text
     )
 
     with tcod.context.new_terminal(
