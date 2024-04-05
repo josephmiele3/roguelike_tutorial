@@ -57,6 +57,16 @@ class PickupAction(Action):
         raise exceptions.Impossible("There is nothing here to pick up.")
 
 
+class EquipAction(Action):
+    def __init__(self, entity: Actor, item: Item):
+        super().__init__(entity)
+
+        self.item = item
+
+    def perform(self) -> None:
+        self.entity.equipment.toggle_equip(self.item)
+
+
 class ItemAction(Action):
     def __init__(
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
@@ -74,11 +84,14 @@ class ItemAction(Action):
 
     def perform(self) -> None:
         """Invoke the items ability, this action will be given to provide context."""
-        self.item.consumable.activate(self)
-
+        if self.item.consumable:
+            self.item.consumable.activate(self)
 
 class DropItem(ItemAction):
     def perform(self) -> None:
+        if self.entity.equipment.item_is_equipped(self.item):
+            self.entity.equipment.toggle_equip(self.item)
+    
         self.entity.inventory.drop(self.item)
 
 class EscapeAction(Action):
